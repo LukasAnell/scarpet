@@ -2,15 +2,16 @@ __config()->{
     'scope'->'global',
     'stay_loaded'->true,
     'requires' -> {
-        'carpet' -> '>=1.4.57'
+        'carpet' -> '>=1.4.57',
+        'minecraft' -> '>=1.21',
     }
 };
-create_datapack('invupd', 
+create_datapack('invupd',
     {
         'readme.txt' -> ['this data pack is created by scarpet','please dont touch it'],
         'data' -> {
             'chyx' ->{
-                'advancements'->{
+                'advancement'->{
                     'xd.json'-> {
                         'rewards' -> {'function' -> 'chyx:invupd'},
                         'criteria' -> {
@@ -21,7 +22,7 @@ create_datapack('invupd',
                         }
                     }
                 },
-                'functions'->{
+                'function'->{
                     'invupd.mcfunction' -> 'script run signal_event(\'invupd\', null, player())\nadvancement revoke @s only chyx:xd'
                 }
             }
@@ -62,7 +63,7 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
         ));
         if(data:'slot'==null,return());
         if(action=='pickup' && 9<=data:'slot' && data:'slot'<18,
-            // CARPET BUG 1.4.66 - Modify not working for fake players: 
+            // CARPET BUG 1.4.66 - Modify not working for fake players:
             // modify(fakeplayer,'selected_slot', data:'slot'-9);
             // FIX:
             run('player ' + fakeplayer + ' hotbar ' + (data:'slot'-8))
@@ -107,7 +108,7 @@ handle_event('invupd',_(fakeplayer)->(
     if(screen,playertoscreen(fakeplayer,screen));
 ));
 
-// CARPET BUG 1.4.66 - Event not working for fake players: 
+// CARPET BUG 1.4.66 - Event not working for fake players:
 // __on_player_switches_slot(fakeplayer, from, to)-> if(player ~ 'player_type' == 'fake',
 // FIX:
 global_fakeplayers_selected_slot = {};
