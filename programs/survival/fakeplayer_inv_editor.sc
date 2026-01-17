@@ -32,7 +32,15 @@ global_nope=nbt('{nope:nopeChYx'+rand(1)+'nope}');
 global_nope_barrier=nbt('{id:"minecraft:barrier",components:{custom_data:'+global_nope+'}}');
 global_nope_structure_void=nbt('{id:"minecraft:structure_void",components:{custom_data:'+global_nope+'}}');
 
-global_slotmap=[[-1,7],[-2,1],[-3,2],[-4,3],[-5,4],...map(range(9),[_,45+_]),...map(range(27),[9+_,18+_])];
+global_slotmap=[
+    {'inventory' -> 'equipment', 'inventory_slot' -> 5, 'screen' -> 7}, // offhand
+    {'inventory' -> 'equipment', 'inventory_slot' -> 4, 'screen' -> 1}, // head
+    {'inventory' -> 'equipment', 'inventory_slot' -> 3, 'screen' -> 2}, // chest
+    {'inventory' -> 'equipment', 'inventory_slot' -> 2, 'screen' -> 3}, // legs
+    {'inventory' -> 'equipment', 'inventory_slot' -> 1, 'screen' -> 4}, // feet
+    ...map(range(9),{'inventory' -> null, 'inventory_slot' -> _, 'screen' -> 45+_}), // hotbar
+    ...map(range(27),{'inventory' -> null, 'inventory_slot' -> 9+_, 'screen' -> 18+_}) // inventory
+];
 
 
 global_fakeplayersscreen={};
@@ -77,22 +85,20 @@ __on_player_interacts_with_entity(creativeplayer, fakeplayer, hand)->(
 
 playertoscreen(fakeplayer,screen)->(
     for(global_slotmap,(
-        [playerslot,screenslot]=_;
-        itemtup=inventory_get(fakeplayer, playerslot);
+        itemtup=inventory_get(_:'inventory', fakeplayer, _:'inventory_slot');
         if(itemtup==null,itemtup=['apple',0,null]);
         [item,count,nbt]=itemtup;
         
-        inventory_set(screen,screenslot, count, item, nbt);
+        inventory_set(screen, _:'screen', count, item, nbt);
     ))
 );
 screentoplayer(fakeplayer,screen)->(
     for(global_slotmap,(
-        [playerslot,screenslot]=_;
-        itemtup=inventory_get(screen, screenslot);
+        itemtup=inventory_get(screen, _:'screen');
         if(itemtup==null,itemtup=['apple',0,null]);
         [item,count,nbt]=itemtup;
         
-        inventory_set(fakeplayer,playerslot, count, item, nbt);
+        inventory_set(_:'inventory', fakeplayer, _:'inventory_slot', count, item, nbt);
     ));
 );
 
